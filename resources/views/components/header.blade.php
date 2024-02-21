@@ -40,15 +40,7 @@
                 <div class="search-header">
                     Result
                 </div>
-                <div class="search-item">
-                    <a href="#">
-                        <img class="mr-3 rounded"
-                            width="30"
-                            src="{{ asset('img/products/product-3-50.png') }}"
-                            alt="product">
-                        oPhone S9 Limited Edition
-                    </a>
-                </div>
+
                 <div class="search-item">
                     <a href="#">
                         <img class="mr-3 rounded"
@@ -245,7 +237,7 @@
                 <img alt="image"
                     src="{{ asset('img/avatar/avatar-1.png') }}"
                     class="rounded-circle mr-1">
-                <div class="d-sm-none d-lg-inline-block">Hi, Ujang Maman</div>
+                    <div class="d-sm-none d-lg-inline-block">Hi, {{ auth()->user()->name }}</div>
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <div class="dropdown-title">Logged in 5 min ago</div>
@@ -262,10 +254,13 @@
                     <i class="fas fa-cog"></i> Settings
                 </a>
                 <div class="dropdown-divider"></div>
-                <a href="#"
-                    class="dropdown-item has-icon text-danger">
+                <a href="#" class="dropdown-item has-icon text-danger"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit()">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
             </div>
         </li>
     </ul>
