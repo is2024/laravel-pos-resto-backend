@@ -21,7 +21,7 @@
                         <a class="nav-link" href="{{ route('users.index') }}">Users</a>
                     </li>
 
-             {{--      </ul>
+                </ul>
 
                 <ul class="dropdown-menu">
                     <li class=''>
@@ -36,6 +36,6 @@
                     </li>
 
                 </ul>
-            </li> --}}
+            </li>
 
 </div>
