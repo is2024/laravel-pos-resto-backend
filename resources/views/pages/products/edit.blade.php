@@ -23,12 +23,8 @@
                     <div class="breadcrumb-item">Products</div>
                 </div>
             </div>
-
             <div class="section-body">
                 <h2 class="section-title">Products</h2>
-
-
-
                 <div class="card">
                     <form action="{{ route('products.update', $product) }}" method="POST">
                         @csrf

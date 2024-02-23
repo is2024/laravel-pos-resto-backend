@@ -4,14 +4,22 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
     //index
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::paginate(10);
+
+        $categories = DB::table('categories')
+        ->when($request->input('name'), function ($query, $name) {
+            return $query->where('name', 'like', '%' . $name . '%');
+        })
+        ->orderBy('created_at', 'desc')
+        ->paginate(5);
         return view('pages.categories.index', compact('categories'));
+
     }
 
     //create
