@@ -11,8 +11,17 @@ class ProductController extends Controller
     // index
     public function index(Request $request)
     {
-        $products = Product::paginate(10);
+
+        $products=  DB::table('products')
+        ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+        ->select('products.*', 'categories.name as category_name' )
+        ->when($request->input('name'), function ($query, $name) {
+            return $query->where('products.name', 'like', '%' . $name . '%');
+        })
+        ->orderBy('products.created_at', 'desc')
+        ->paginate(10);
         return view('pages.products.index', compact('products'));
+
 
 
     }

@@ -67,7 +67,7 @@
                                                 <td>{{ $product->name }}
                                                 </td>
                                                 <td>
-                                                    {{ $product->category->name }}
+                                                    {{ $product->category_name }}
                                                 </td>
                                                 <td>
                                                     {{ $product->price }}
