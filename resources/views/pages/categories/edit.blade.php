@@ -27,7 +27,7 @@
                             <h2 class="section-title">Category</h2>
 
                 <div class="card">
-                    <form action="{{ route('categories.update', $category) }}" method="POST">
+                    <form action="{{ route('categories.update', $categories) }}" method="POST" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="card-header">
@@ -40,7 +40,7 @@
                                     class="form-control @error('name')
                                 is-invalid
                             @enderror"
-                                    name="name" value="{{ $category->name }}">
+                                    name="name" value="{{ $categories->name }}">
                                 @error('name')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -53,7 +53,7 @@
                                     class="form-control @error('description')
                                 is-invalid
                             @enderror"
-                                    name="description" value="{{ $category->description }}">
+                                    name="description" value="{{ $categories->description }}">
                                 @error('description')
                                     <div class="invalid-feedback">
                                         {{ $message }}

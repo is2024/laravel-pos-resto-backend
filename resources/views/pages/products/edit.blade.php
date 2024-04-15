@@ -26,7 +26,7 @@
             <div class="section-body">
                 <h2 class="section-title">Products</h2>
                 <div class="card">
-                    <form action="{{ route('products.update', $product) }}" method="POST">
+                    <form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="card-header">

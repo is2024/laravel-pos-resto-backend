@@ -57,6 +57,10 @@
                                             <th>Name</th>
                                             <th>Category</th>
                                             <th>Price</th>
+
+                                            <th>Stock</th>
+                                            <th>Photo</th>
+
                                             <th>Status</th>
                                             <th>Create At</th>
                                             <th>Action</th>
@@ -72,6 +76,21 @@
                                                 <td>
                                                     {{ sprintf('Rp. %s', number_format($product->price)) }}
                                                 </td>
+
+                                                <td>{{ $product->stock }}
+                                                </td>
+                                                <td>
+                                                    @if ($product->image)
+                                                        <img src="{{ asset('storage/products/'.$product->image) }}" alt=""
+                                                            width="100px" class="img-thumbnail">
+                                                            @else
+                                                            <span class="badge badge-danger">No Image</span>
+
+                                                    @endif
+
+                                                </td>
+
+
                                                 <td>
                                                     {{ $product->status == 1 ? 'Active' : 'Inactive' }}
                                                 </td>

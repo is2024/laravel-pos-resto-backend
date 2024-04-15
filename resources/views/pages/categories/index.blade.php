@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('title', 'Categories')
@@ -11,7 +12,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>Category</h1>
+                <h1>Categories</h1>
                 <div class="section-header-button">
                     <a href="{{ route('categories.create') }}" class="btn btn-primary">Add New</a>
                 </div>
@@ -27,14 +28,10 @@
                         @include('layouts.alert')
                     </div>
                 </div>
-
-
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h4>All Category</h4>
-                            </div>
+
                             <div class="card-body">
 
                                 <div class="float-right">
@@ -55,8 +52,9 @@
                                         <tr>
 
                                             <th>Name</th>
-
-                                            <th>Create At</th>
+                                            <th>Deskription</th>
+                                            <th>Photo</th>
+                                            <th>Created At</th>
                                             <th>Action</th>
                                         </tr>
                                         @foreach ($categories as $category)
@@ -64,7 +62,15 @@
 
                                                 <td>{{ $category->name }}
                                                 </td>
-
+                                                <td>{{ $category->description }}</td>
+                                                <td>
+                                                    @if ($category->image)
+                                                        <img src="{{ asset('storage/categories/'.$category->image) }}" alt=""
+                                                            width="100px" class="img-thumbnail">
+                                                            @else
+                                                            <span class="badge badge-danger">No Image</span>
+                                                    @endif
+                                                </td>
                                                 <td>{{ $category->created_at }}</td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">

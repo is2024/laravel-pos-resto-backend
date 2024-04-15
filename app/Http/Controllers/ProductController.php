@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    // index
-    public function index(Request $request)
-    {
 
+    public function index(Request $request){
         $products=  DB::table('products')
         ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
         ->select('products.*', 'categories.name as category_name' )
@@ -22,112 +19,91 @@ class ProductController extends Controller
         ->paginate(10);
         return view('pages.products.index', compact('products'));
 
-
-
     }
-
-    // create
-    public function create()
+    //create
+    public function create(Request $request)
     {
-        $categories = DB::table('categories')->get();
+        $categories = DB::table('categories')
+        ->when($request->input('name'), function ($query, $name) {
+            return $query->where('name', 'like', '%' . $name . '%');
+        })
+        ->orderBy('updated_at', 'asc')
+        ->paginate(10);
         return view('pages.products.create', compact('categories'));
     }
 
-    // store
-    public function store(Request $request)
-    {
-        // validate the request...
+     //store
+     public function store(Request $request)
+     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|min:3|unique:products',
             'description' => 'required',
-            'price' => 'required|numeric',
+            'price' => 'required|integer',
             'category_id' => 'required',
-            'stock' => 'required|numeric',
+            'stock' => 'required|integer',
             'status' => 'required|boolean',
             'is_favorite' => 'required|boolean',
+            'image' => 'required|image|mimes:png,jpg,jpeg'
 
         ]);
 
-        // store the request...
-        $product = new Product;
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->category_id = $request->category_id;
-        $product->stock = $request->stock;
-        $product->status = $request->status;
-        $product->is_favorite = $request->is_favorite;
+         //upload image
+         $filename = time() . '.' . $request->image->extension();
+         $request->image->storeAs('public/products', $filename);
+         $data = $request->all();
 
-        $product->save();
+         // $data = $request->all();
+         $product = new \App\Models\Product;
+         //$categories = new \App\Models\Category;
+         $product->name = $request->name;
+         $product->description = $request->description;
+         $product->price = (int) $request->price;
+         $product->stock = (int) $request->stock;
+         $product->category_id = $request->category_id;
+         $product->status = $request->status;
+         $product->is_favorite = $request->is_favorite;
+         $product->image = $filename;
+         $product->save();
 
-        //save image
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $image->storeAs('public/products', $product->id . '.' . $image->getClientOriginalExtension());
-            $product->image = 'storage/products/' . $product->id . '.' . $image->getClientOriginalExtension();
-            $product->save();
-        }
-
-        return redirect()->route('products.index')->with('success', 'Product created successfully');
+         return redirect()->route('products.index');
     }
-
-    // show
-    public function show($id)
-    {
-        return view('pages.products.show');
-    }
-
-    // edit
+    //edit
     public function edit($id)
     {
-        $product = Product::findOrFail($id);
-        $categories = DB::table('categories')->get();
-        return view('pages.products.edit', compact('product', 'categories'));
+        $product = \App\Models\Product::findOrFail($id);
+        $categories = \App\Models\Category::all();
+        return view('pages.products.edit', compact('product','categories'));
     }
-
-    // update
+    //update
     public function update(Request $request, $id)
     {
-        // validate the request...
-        $request->validate([
-            'name' => 'required',
-            'description' => 'required',
-            'price' => 'required|numeric',
-            'category_id' => 'required',
-            'stock' => 'required|numeric',
-            'status' => 'required|boolean',
-            'is_favorite' => 'required|boolean',
+        $product = \App\Models\Product::findOrFail($id);
+	    $filename=$product->image;
+        // check image
+       if ($request->hasFile('image')) {
+           $filename = time() . '.' . $request->image->extension();
+            $request->image->storeAs('public/products', $filename);
+            $product['image'] = $filename;
+       }
+
+        $product->update ([
+            'name' => $request->name,
+            'price' => (int) $request->price,
+            'stock' => (int) $request->stock,
+            'category_id' => $request->category_id,
+            'image' => $filename,
+            'status' => $request->status,
+            'is_favorite' => $request->is_favorite,
         ]);
 
-        // update the request...
-        $product = Product::find($id);
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->category_id = $request->category_id;
-        $product->stock = $request->stock;
-        $product->status = $request->status;
-        $product->is_favorite = $request->is_favorite;
-        $product->save();
-
-        //save image
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $image->storeAs('public/products', $product->id . '.' . $image->getClientOriginalExtension());
-            $product->image = 'storage/products/' . $product->id . '.' . $image->getClientOriginalExtension();
-            $product->save();
-        }
-
-        return redirect()->route('products.index')->with('success', 'Product updated successfully');
+        return redirect()->route('products.index')->with('success', 'Products successfully updated');
     }
 
-    // destroy
-    public function destroy($id)
-    {
-        // delete the request...
-        $product = Product::find($id);
-        $product->delete();
-
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully');
-    }
+   //destroy
+   public function destroy($id)
+   {
+       $product = \App\Models\Product::findOrFail($id);
+       $product->delete();
+       return redirect()->route('products.index')->with('success', 'Products deleted successfully');
+   }
 }
